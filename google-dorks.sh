@@ -1,4 +1,28 @@
 #!/usr/bin/bash
+
+urlencode() {
+  # Usage: urlencode "string"
+  local string="$1"
+  local length="${#string}"
+  local encoded=""
+  local i
+
+  for (( i = 0; i < length; i++ )); do
+    local c="${string:i:1}"
+    case $c in
+      [a-zA-Z0-9.~_-])
+        encoded+="$c"
+        ;;
+      *)
+        printf -v hex "%02X" "'$c"
+        encoded+="%$hex"
+        ;;
+    esac
+  done
+
+  echo "$encoded"
+}
+
 echo -e "
          \e[1;33m   ********************************************
             *                                          *
@@ -21,7 +45,7 @@ else
 n=1
 read -p $'\e[1;32mEnter dork :: \e[0m' dork
 for i in {1..1000..10};do
-for urls in `curl -u $1:$2 -ks "https://google-reverse-proxy.duckdns.org/search?q=$dork&start=$i" -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0' | grep -Eoi '<a[^>]+>' | grep 'UWckNb' | grep -oP 'href="\K[^"]+'`;do
+for urls in `curl -u $1:$2 -ks "https://google-reverse-proxy.duckdns.org/search?q=$(urlencode "$dork")&start=$i" -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0' | grep -Eoi '<a[^>]+>' | grep 'UWckNb' | grep -oP 'href="\K[^"]+'`;do
 echo -e "\e[1;32m [\e[1;31m$n\e[1;32m] \e[1;33m$urls\e[0m"
 n=$((n+1))
 done
