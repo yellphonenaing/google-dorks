@@ -44,7 +44,7 @@ exit
 else
 n=1
 read -p $'\e[1;32mEnter dork :: \e[0m' dork
-for i in {1..1000..10};do
+for i in {1..100000..10};do
 for urls in `curl -u $1:$2 -ks "https://google-reverse-proxy.duckdns.org/search?q=$(urlencode "$dork")&start=$i" -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0' | grep -Eoi '<a[^>]+>' | grep 'UWckNb' | grep -oP 'href="\K[^"]+'`;do
 echo -e "\e[1;32m [\e[1;31m$n\e[1;32m] \e[1;33m$urls\e[0m"
 n=$((n+1))
